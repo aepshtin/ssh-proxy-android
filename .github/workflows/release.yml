@@ -2,19 +2,20 @@ name: Build & Release APK
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ main ]
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -28,27 +29,40 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Generate version
+        id: version
+        run: |
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="1.0.${COMMIT_COUNT}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Version: ${VERSION}"
+
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
       - name: Sign APK with debug key
         run: |
           BUILD_TOOLS=$ANDROID_HOME/build-tools/$(ls $ANDROID_HOME/build-tools/ | sort -V | tail -1)
+          # Find the APK (could be unsigned or signed depending on build config)
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
           $BUILD_TOOLS/apksigner sign --ks ~/.android/debug.keystore \
             --ks-pass pass:android \
             --key-pass pass:android \
             --ks-key-alias androiddebugkey \
-            app/build/outputs/apk/release/app-release-unsigned.apk || true
+            "$APK" || true
 
       - name: Rename APK
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          cp app/build/outputs/apk/release/app-release-unsigned.apk \
-             app/build/outputs/apk/release/ssh-proxy-vpn-${VERSION}.apk
+          APK=$(find app/build/outputs/apk/release -name '*.apk' | head -1)
+          cp "$APK" app/build/outputs/apk/release/ssh-proxy-vpn-${{ steps.version.outputs.version }}.apk
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.version }}
           generate_release_notes: true
           files: |
             app/build/outputs/apk/release/ssh-proxy-vpn-*.apk
