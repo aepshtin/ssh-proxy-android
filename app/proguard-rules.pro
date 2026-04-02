@@ -1,0 +1,4 @@
+-keep class com.jcraft.jsch.** { *; }
+-keep class com.github.mwiede.jsch.** { *; }
+-dontwarn org.ietf.jgss.**
+-dontwarn org.slf4j.**

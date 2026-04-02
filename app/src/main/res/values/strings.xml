@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SSH Proxy VPN</string>
+
+    <!-- Main screen -->
+    <string name="no_profiles">No SSH profiles yet.\nTap + to add one.</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="menu">Menu</string>
+
+    <!-- Profile edit -->
+    <string name="add_profile">Add Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="server_host">Server Host</string>
+    <string name="port">Port</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="save">Save</string>
+    <string name="field_required">This field is required</string>
+    <string name="invalid_port">Port must be 1-65535</string>
+    <string name="profile_saved">Profile saved</string>
+
+    <!-- Delete -->
+    <string name="delete_profile">Delete Profile</string>
+    <string name="delete_confirm">Delete \"%1$s\"?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- App selector -->
+    <string name="select_apps">Select Apps</string>
+    <string name="per_app_vpn">Route only selected apps through VPN</string>
+    <string name="app_icon">App icon</string>
+
+    <!-- Status -->
+    <string name="status_connected">Connected</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="status_error">Connection Error</string>
+</resources>
